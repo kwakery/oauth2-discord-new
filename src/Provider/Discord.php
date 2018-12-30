@@ -120,6 +120,20 @@ class Discord extends AbstractProvider
      */
     protected function createResourceOwner(array $response, AccessToken $token)
     {
-        return new DiscordResourceOwner($response);
+        return new DiscordResourceOwner($this, $response, $token);
+    }
+
+
+    public function getInviteEndpoint($invite)
+    {
+        return $this->apiDomain.'/invites/'.$invite;
+    }
+
+    public function request($method, $url, $token, array $options = [])
+    {
+        $request = $this->getAuthenticatedRequest(
+            $method, $url, $token, $options
+        );
+        return $this->getResponse($request);
     }
 }

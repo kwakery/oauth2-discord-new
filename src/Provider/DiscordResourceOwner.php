@@ -20,6 +20,9 @@ class DiscordResourceOwner implements ResourceOwnerInterface
 {
     use ArrayAccessorTrait;
 
+    protected $discord;
+    protected $token;
+
     /**
      * Raw response
      *
@@ -32,10 +35,12 @@ class DiscordResourceOwner implements ResourceOwnerInterface
      *
      * @param array  $response
      */
-    public function __construct(array $response = array())
-    {
-        $this->response = $response;
-    }
+     public function __construct(Discord $discord, array $response = array(), AccessToken $token)
+     {
+         $this->response = $response;
+         $this->discord = $discord;
+         $this->token = $token;
+     }
 
     /**
      * Get resource owner ID
@@ -105,5 +110,16 @@ class DiscordResourceOwner implements ResourceOwnerInterface
     public function toArray()
     {
         return $this->response;
+    }
+
+    public function acceptInvite($invite)
+    {
+        $response = $this->discord->request(
+            'POST',
+            $this->discord->getInviteEndpoint($invite),
+            $this->token
+        );
+
+        return $response;
     }
 }
